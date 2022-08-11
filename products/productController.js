@@ -4,9 +4,13 @@ import Product from './Product.js';
 const router = express.Router();
 
 
-router.get('/product', (req, res) => {
+router.get('/product/:id', (req, res) => {
     res.statusCode = 200;
-    Product.findAll().then(products => {
+    Product.findAll({
+        where: {
+            provider: req.params.id
+        }
+    }).then(products => {
         res.json(products);
     }).catch(err => {
         res.statusCode = 500;
@@ -16,12 +20,14 @@ router.get('/product', (req, res) => {
 
 
 router.post("/product", (req, res) => {
-    var { title, description, price } = req.body;
+    var { nome, descricao, preco, quantidade, provider } = req.body;
 
     Product.create({
-        title: title,
-        description: description,
-        price: price
+        nome: nome,
+        descricao: descricao,
+        preco: preco,
+        quantidade: quantidade,
+        provider: provider
     }).then(product =>{
         res.statusCode = 200;
         res.json(product);

@@ -26,10 +26,6 @@ const Client = connect.define('cliente', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    quantPedidos: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
     email: {
         type: Sequelize.STRING,
         allowNull: false

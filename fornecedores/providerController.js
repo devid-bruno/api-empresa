@@ -15,19 +15,18 @@ router.get('/provider', (req, res) => {
 
 
 router.post("/provider", (req, res) => {
-    var { nome, email, telefone, cnpj, TipoProvider } = req.body;
+    var { fornecedor, nomeProduto, descricao, quantFornecida} = req.body;
 
-    if (!nome || !email || !telefone || !cnpj || !TipoProvider) {
+    if (!nomeProduto || !descricao || !quantFornecida || !fornecedor) {
         res.statusCode = 400;
         res.json({ error: "Preencha todos os campos" });
         return;
     }
     Provider.create({
-        nome,
-        email,
-        telefone,
-        cnpj,
-        TipoProvider
+        fornecedor,
+        nomeProduto,
+        descricao,
+        quantFornecida
     }).then(provider => {
         res.statusCode = 201;
         res.json(provider);
@@ -59,13 +58,12 @@ router.post("/providerDelete/:id", (req, res) => {
 
 router.post("/providerEdit/:id", (req, res) => {
     var  id  = req.params.id;
-    var { nome, email, telefone, cnpj, TipoProvider } = req.body;
+    var { fornecedor, nomeProduto, descricao, quantFornecida} = req.body;
     Provider.update({
-        nome: nome,
-        email: email,
-        telefone: telefone,
-        cnpj: cnpj,
-        TipoProvider: TipoProvider
+        fornecedor: fornecedor,
+        nomeProduto: nomeProduto,
+        descricao: descricao,
+        quantFornecida: quantFornecida
     },{
         where: {
             id: id

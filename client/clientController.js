@@ -2,10 +2,10 @@ import express from 'express';
 import Client from './Client.js';
 const router = express.Router();
 
-router.get("/client", (req, res) => {
+router.get("/cliente", (req, res) => {
     res.statusCode = 200;
     Client.findAll().then(client => {
-        res.json(client);
+        res.render("cliente/clientes", { client });
     }).catch(err => {
         res.statusCode = 500;
         res.json({ error: err });
@@ -25,7 +25,7 @@ router.post("/client", (req, res) => {
         quantPedidos: quantPedidos
     }).then(Client =>{
         res.statusCode = 200;
-        res.json(Client);
+        res.render("cliete/cadasCliente", { Client });
     }).catch(err => {
         if (err.name === "SequelizeUniqueConstraintError") {
             res.statusCode = 400;

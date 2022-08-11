@@ -1,28 +1,24 @@
 import Sequelize from 'sequelize';
 import connect from '../db/db.js';
 
-const Provider = connect.define('fornecedores', {
-    nome:{
+const Provider = connect.define('providers', { 
+    fornecedor:{
         type: Sequelize.STRING,
         allowNull: false
     },
-    email:{
+    nomeProduto:{
         type: Sequelize.STRING,
         allowNull: false
     },
-    telefone:{
+    descricao:{
         type: Sequelize.STRING,
         allowNull: false
     },
-    cnpj:{
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    TipoProvider:{
-        type: Sequelize.STRING,
+    quantFornecida:{
+        type: Sequelize.INTEGER,
         allowNull: false
     }
-})
+});
 
 
 //Provider.sync({force: true})

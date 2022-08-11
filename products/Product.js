@@ -1,17 +1,20 @@
 import Sequelize from 'sequelize';
 import connect from '../db/db.js';
-
 const Product = connect.define('products', {
-    title:{
+    nome:{
         type: Sequelize.STRING,
         allowNull: false
     },
-    description:{
+    descricao:{
         type: Sequelize.STRING,
         allowNull: false
     },
-    price:{
+    preco:{
         type: Sequelize.FLOAT,
+        allowNull: false
+    },
+    quantidade:{
+        type: Sequelize.INTEGER,
         allowNull: false
     }
 })
