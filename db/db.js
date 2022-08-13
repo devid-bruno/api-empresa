@@ -2,7 +2,7 @@ import sequelize, { Sequelize } from 'sequelize';
 
 var db = 'empresa'
 
-const connect = new Sequelize(`${db}`, 'root', 'root', {
+const connect = new Sequelize(`${db}`, 'root', 'rootroot', {
     host: 'localhost',
     dialect: 'mysql',
     timezone: '-03:00'

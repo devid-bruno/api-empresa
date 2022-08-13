@@ -1,5 +1,6 @@
 import express from 'express';
 import Client from './Client.js';
+import adminAuth from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/cliente", (req, res) => {

@@ -1,6 +1,6 @@
 import express from 'express';
 import Product from './Product.js';
-
+import adminAuth from "../middleware/auth.js";
 const router = express.Router();
 
 

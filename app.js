@@ -18,13 +18,8 @@ app.use(bodyParser.json());
 
 
 app.use(session({
-    name : 'codeil',
-    secret : 'something',
-    resave :false,
-    saveUninitialized: true,
-    cookie : {
-            maxAge:(1000 * 60 * 100)
-    }      
+   secret: "qualquercoisa",
+   cookie: { maxAge: 30000 }
 }));
 
 app.use("/", UsersController);
@@ -32,7 +27,5 @@ app.use("/", clientController);
 app.use("/", providerController);
 app.use("/", productController);
 app.use("/", adminController);
-
-
 
 app.listen(8008, () =>{})

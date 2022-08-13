@@ -1,7 +1,7 @@
 import express from 'express';
 import User from './User.js';
 import bcrypt from 'bcrypt';
-
+import adminAuth from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/", (req, res) => {

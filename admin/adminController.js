@@ -1,15 +1,12 @@
 import express from "express";
 import Admin from './Admin.js';
 import bcrypt from 'bcrypt';
-
+import verify from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/admin/index", (req, res) => {
-    //exibir o nome do usuário logado
-    res.render("admin/index", {
-        user: req.session.user
-        });
+router.get("/logado", verify, (req, res) => {
+    res.render("admin/index", { nome: req.session.admin.nome });
 });
 
 router.get("/adminAuth", (req, res) => {
@@ -18,7 +15,7 @@ router.get("/adminAuth", (req, res) => {
 
 
 
-router.post("/authAdmin", (req, res) => {
+router.post("/authenticate", (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
     
@@ -27,19 +24,22 @@ router.post("/authAdmin", (req, res) => {
             email: email
         }
     }).then((admin) => {
-        if (admin != undefined) {
-            if (bcrypt.compareSync(password, admin.password)) {
-                req.session.admin = {
-                    id: admin.id,
-                    email: admin.email
-                };
-                res.redirect("/admin/index");
-            } else {
-                res.redirect("/index");
+       if(admin != undefined){
+           var correct = bcrypt.compareSync(password, admin.password);
+
+           if(correct){
+            req.session.admin = {
+                id: admin.id,
+                email: admin.email,
+                nome: admin.nome
             }
-        } else {
-            res.redirect("/index");
-        }
+            res.redirect("/logado")
+           }else{
+            res.redirect("/adminAuth");
+           }
+       }else{
+        res.redirect("adminAuth");  
+       }
     }).catch(err => {
         res.statusCode = 500;
         res.json({ error: err });
@@ -55,7 +55,7 @@ router.get("/admin", (req, res) => {
     });
 });
 
-router.post("/admin", (req, res) => {
+router.post("/admin", verify,(req, res) => {
     var { nome, email, telefone, password} = req.body;
     
     Admin.findOne({
@@ -86,7 +86,7 @@ router.post("/admin", (req, res) => {
 });
 
 
-router.put("/admin/:id", (req, res) => {
+router.put("/admin/:id", verify,(req, res) => {
     var { nome, email, telefone, password} = req.body;
     var { id } = req.params;
     Admin.update({
@@ -106,7 +106,7 @@ router.put("/admin/:id", (req, res) => {
 });
 
 
-router.delete("/admin/:id", (req, res) => {
+router.delete("/admin/:id", verify,(req, res) => {
     var { id } = req.params;
     Admin.destroy({
         where: {

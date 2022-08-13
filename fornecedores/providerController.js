@@ -1,5 +1,7 @@
 import express from 'express';
 import Provider from './Providers.js';
+import adminAuth from "../middleware/auth.js";
+
 
 const router = express.Router();
 
