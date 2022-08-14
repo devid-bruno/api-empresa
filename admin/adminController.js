@@ -6,13 +6,17 @@ import verify from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/logado", verify, (req, res) => {
-    res.render("admin/index", { nome: req.session.admin.nome });
+    Admin.findAll().then(admin => {
+        res.render("admin/index", { admin, nome: req.session.admin.nome});
+    }).catch(err => {
+        res.send(err);
+    });
 });
+
 
 router.get("/adminAuth", (req, res) => {
     res.render("index");
 })
-
 
 
 router.post("/authenticate", (req, res) => {
@@ -47,13 +51,10 @@ router.post("/authenticate", (req, res) => {
 });
 
 
-router.get("/admin", (req, res) => {
-    Admin.findAll().then(admin => {
-        res.send(admin);
-    }).catch(err => {
-        res.send(err);
-    });
-});
+
+router.get("/createAdmin", verify,(req, res) => {
+    res.render("admin/createAdmin", { nome: req.session.admin.nome});
+})
 
 router.post("/admin", verify,(req, res) => {
     var { nome, email, telefone, password} = req.body;
@@ -77,7 +78,7 @@ router.post("/admin", verify,(req, res) => {
             telefone: telefone,
             password: hash
             }).then(() => {
-                res.json("Usuário criado com sucesso");
+                res.redirect("/logado");
             }).catch((err) => {
                 res.json("Usuário já existe");
             });
@@ -85,10 +86,24 @@ router.post("/admin", verify,(req, res) => {
     });
 });
 
+router.get("/editAdmin/:id", verify, (req, res) => {
+   var id = req.params.id;
 
-router.put("/admin/:id", verify,(req, res) => {
-    var { nome, email, telefone, password} = req.body;
-    var { id } = req.params;
+    Admin.findByPk(id).then(admin => {
+        if(admin != undefined){
+            res.render("admin/editAdmin", { admin: admin, nome: req.session.admin.nome});
+        }else{
+            res.redirect("/logado");
+        }
+    }).catch(err => {
+        res.redirect('/logado');
+    })
+});
+
+router.post("/adminUpdate", verify,(req, res) => {
+    var id  = req.body.id
+    var { nome, email, telefone, password} = req.body
+    
     Admin.update({
         nome: nome,
         email: email,
@@ -99,25 +114,32 @@ router.put("/admin/:id", verify,(req, res) => {
             id: id
         }
     }).then(() => {
-        res.json("Usuário editado com sucesso");
+        res.redirect("/logado");
     }).catch((err) => {
-        res.json("Usuário não existe");
+        res.json(err);
     })
 });
 
 
-router.delete("/admin/:id", verify,(req, res) => {
-    var { id } = req.params;
+router.post("/adminDelete", verify,(req, res) => {
+    var id  = req.body.id;
     Admin.destroy({
         where: {
             id: id
         }
     }).then(() => {
-        res.json("Usuário excluido com sucesso");
+        res.redirect("/logado");
     }).catch((err) => {
-        res.json("Usuário não existe");
+        res.json(err);
     })
 });
+
+//destruir sessão
+router.get("/logout", (req, res) => {
+    req.session.destroy();
+    res.redirect("/adminAuth");
+});
+
 
 export default router;
 

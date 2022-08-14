@@ -5,7 +5,8 @@ var db = 'empresa'
 const connect = new Sequelize(`${db}`, 'root', 'rootroot', {
     host: 'localhost',
     dialect: 'mysql',
-    timezone: '-03:00'
+    timezone: '-03:00',
+    logging: false
 })
 
 connect.authenticate().then(() => {
