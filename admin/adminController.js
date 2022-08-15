@@ -1,13 +1,15 @@
 import express from "express";
 import Admin from './Admin.js';
+import User from '../user/User.js';
 import bcrypt from 'bcrypt';
 import verify from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.get("/logado", verify, (req, res) => {
-    Admin.findAll().then(admin => {
-        res.render("admin/index", { admin, nome: req.session.admin.nome});
+
+    User.findAll().then(user => {
+        res.render("admin/index", { user, nome: req.session.admin.nome});
     }).catch(err => {
         res.send(err);
     });
@@ -22,27 +24,26 @@ router.get("/adminAuth", (req, res) => {
 router.post("/authenticate", (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
-    
+
     Admin.findOne({
         where: {
             email: email
         }
     }).then((admin) => {
        if(admin != undefined){
-           var correct = bcrypt.compareSync(password, admin.password);
-
-           if(correct){
-            req.session.admin = {
-                id: admin.id,
-                email: admin.email,
-                nome: admin.nome
+        if(admin.nivel == "administrador"){
+            if(bcrypt.compareSync(password, admin.password)){
+                req.session.admin = admin;
+                res.redirect("/logado");
+            }else{
+                res.redirect("/adminAuth");
             }
-            res.redirect("/logado")
-           }else{
+        }
+        else{
             res.redirect("/adminAuth");
-           }
+        }
        }else{
-        res.redirect("adminAuth");  
+        res.redirect("/adminAuth");  
        }
     }).catch(err => {
         res.statusCode = 500;
@@ -57,7 +58,7 @@ router.get("/createAdmin", verify,(req, res) => {
 })
 
 router.post("/admin", verify,(req, res) => {
-    var { nome, email, telefone, password} = req.body;
+    var { nome, email, telefone, password, nivel} = req.body;
     
     Admin.findOne({
         where: 
@@ -65,7 +66,8 @@ router.post("/admin", verify,(req, res) => {
             nome: nome,
             email: email,
             telefone: telefone,
-            password: password
+            password: password,
+            nivel: nivel
         }
     }).then( admin => {
         if(admin == undefined){
@@ -76,7 +78,8 @@ router.post("/admin", verify,(req, res) => {
             nome: nome,
             email: email,
             telefone: telefone,
-            password: hash
+            password: hash,
+            nivel: nivel
             }).then(() => {
                 res.redirect("/logado");
             }).catch((err) => {
@@ -102,13 +105,14 @@ router.get("/editAdmin/:id", verify, (req, res) => {
 
 router.post("/adminUpdate", verify,(req, res) => {
     var id  = req.body.id
-    var { nome, email, telefone, password} = req.body
+    var { nome, email, telefone, password, nivel} = req.body
     
     Admin.update({
         nome: nome,
         email: email,
         telefone: telefone,
-        password: password
+        password: password,
+        nivel: nivel
     },{
         where: {
             id: id
@@ -142,4 +146,3 @@ router.get("/logout", (req, res) => {
 
 
 export default router;
-

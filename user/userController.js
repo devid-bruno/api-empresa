@@ -8,7 +8,35 @@ router.get("/", (req, res) => {
     res.render("func");
 })
 
+router.post("/authenticateFunc", (req, res) => {
+    var email = req.body.email;
+    var password = req.body.password;
 
+    User.findOne({
+        where: {
+            email: email
+        }
+    }).then((users) => {
+       if(users != undefined){
+        if(users){
+            if(bcrypt.compareSync(password, users.password)){
+                req.session.users = users;
+                res.render("usuario/index");
+            }else{
+                res.redirect("/func");
+            }
+        }
+        else{
+            res.redirect("/func");
+        }
+       }else{
+        res.redirect("/func");  
+       }
+    }).catch(err => {
+        res.statusCode = 500;
+        res.json({ error: err });
+    });
+});
 
 router.get("/user", (req, res) => {
     User.findAll().then(users => {
@@ -20,7 +48,7 @@ router.get("/user", (req, res) => {
 })
 
 router.post("/user", (req, res) => {
-    var { nome, email, telefone, password, isAdmin } = req.body;
+    var { nome, email, telefone, password} = req.body;
     
     User.findOne({
         where: 
@@ -28,11 +56,10 @@ router.post("/user", (req, res) => {
             nome: nome,
             email: email,
             telefone: telefone,
-            password: password,
-            isAdmin: isAdmin
+            password: password
         }
-    }).then( user => {
-        if(user == undefined){
+    }).then( users => {
+        if(users == undefined){
             var salt = bcrypt.genSaltSync(10);
             var hash = bcrypt.hashSync(password, salt);
 
@@ -40,16 +67,15 @@ router.post("/user", (req, res) => {
             nome: nome,
             email: email,
             telefone: telefone,
-            password: hash,
-            isAdmin: isAdmin
+            password: hash
             }).then(() => {
-                res.json("Usuário criado com sucesso");
+                res.json("/func");
             }).catch((err) => {
-                res.json("Usuário já existe");
+                res.json({err}, "Usuário já existe");
             });
         }
     });
-})
+});
 
 
 router.post("/userDelete/:id", (req, res) => {

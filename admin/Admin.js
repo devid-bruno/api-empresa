@@ -22,6 +22,10 @@ const Admin = connect.define('admin', {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
+    },
+    nivel:{
+        type: Sequelize.STRING,
+        allowNull: false
     }
 });
 

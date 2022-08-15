@@ -47,6 +47,13 @@
                       placeholder="Password">
                   </div>
                 </div>
+                <div class="form-group">
+                  <select name="nivel" id="nivel" >
+                    <option>Nível: <%= admin.nivel  %></option>
+                    <option value="administrador">Administrador</option>
+                    <option value="usuario">Usuário</option>
+                  </select>
+                </div>
                 <div class="card-footer">
                   <input type="hidden" name="id" value="<%= admin.id  %> ">
                   <button type="submit" class="btn btn-primary">Atualizar</button>

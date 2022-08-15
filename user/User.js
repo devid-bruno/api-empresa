@@ -21,12 +21,6 @@ const User = connect.define('user', {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
-    },
-    isAdmin: {
-        type: Sequelize.BOOLEAN,
-        required: true,
-        allowNull: false,
-        unique: true
     }
 })
 
